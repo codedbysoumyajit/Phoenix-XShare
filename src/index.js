@@ -8,9 +8,10 @@ import crypto from "crypto";
 import ejs from "ejs";
 import cookieParser from "cookie-parser";
 import { DateTime } from "luxon";
+import bcrypt from 'bcryptjs';
 import { createServer } from "http";
 import log from "./utils/console.js";
-import getDB from "./utils/quickdb.js";
+import getDB from "./utils/mongodb.js";
 import config from "../config/config.js";
 
 const app = express();
@@ -60,10 +61,12 @@ app.post("/login", async (req, res) => {
   if (username !== config.settings.loginUser) {
     return res.status(400).send("Invalid username or password");
   }
-    if (password !== config.settings.loginPass) {
 
+  // Compare the provided password with the stored hash
+  const isMatch = await bcrypt.compare(password, config.settings.loginPass);
+
+  if (!isMatch) {
     return res.status(400).send("Invalid username or password");
-
   }
 
   res.cookie("loggedIn", true);
@@ -137,6 +140,7 @@ app.post("/upload", authenticate, async (req, res) => {
     const downloadLink = `${config.settings.domain}/download/${fileName}`;
     const qrdownloadLink = `${config.settings.domain}/cdn/${fileName}`;
     const viewLink = `${config.settings.domain}/view/${fileName}`;
+    const cdnLink = `${config.settings.domain}/cdn/${fileName}`;
     // Get the current date and time in the local timezone
     const localDateTime = DateTime.local();
 
@@ -161,20 +165,22 @@ Date: ${localDateTime.toLocaleString(
       const fileSizeInBytes = stats.size;
       const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
 
-      const filesDB = db.table("filesDB");
+      const dataCollection = db.collection("file_uploadData");
 
-      await filesDB.set(fileName, {
-        uploadTime: formattedOutput,
-        uploader: username,
-        encryption: `${config.settings.encryption}`,
-        fileSize: fileSizeInMegabytes.toFixed(fileSizeInMegabytes < 1 ? 2 : 0),
-      });
+      await dataCollection.insertOne({
+      filename: fileName,
+      uploadTime: formattedOutput,
+      uploader: username,
+      encryption: `${config.settings.encryption}`,
+      fileSize: fileSizeInMegabytes.toFixed(fileSizeInMegabytes < 1 ? 2 : 0),
+       });
     });
     // Display the file name, download link, and QR code on the upload success page
     res.render("uploaded", {
       fileName,
       downloadLink,
       viewLink,
+      cdnLink,
       qrCodeImage,
       uploader: username,
       uploadTime: formattedOutput,
@@ -251,14 +257,15 @@ Date: ${localDateTime.toLocaleString(
       const fileSizeInBytes = stats.size;
       const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
 
-      const filesDB = db.table("filesDB");
+      const dataCollection = db.collection("file_uploadData");
 
-      await filesDB.set(fileName, {
-        uploadTime: formattedOutput,
-        uploader: username,
-        encryption: `${config.settings.encryption}`,
-        fileSize: fileSizeInMegabytes.toFixed(fileSizeInMegabytes < 1 ? 2 : 0),
-      });
+      await dataCollection.insertOne({
+      filename: fileName,
+      uploadTime: formattedOutput,
+      uploader: username,
+      encryption: `${config.settings.encryption}`,
+      fileSize: fileSizeInMegabytes.toFixed(fileSizeInMegabytes < 1 ? 2 : 0),
+       });
     });
     // Display the file name, download link, and QR code on the upload success page
     res.render("uploaded", {
@@ -299,8 +306,8 @@ app.get(`/download/:fileName`, async (req, res) => {
     }
 
     //getting fileData from db
-    const filesDB = db.table("filesDB");
-    let fileData = await filesDB.get(fileName);
+    const dataCollection = db.collection("file_uploadData");
+    const fileData = await dataCollection.findOne({ filename: fileName });
     const uploadTime = fileData.uploadTime;
     const uploader = fileData.uploader;
     const fileSize = fileData.fileSize;
@@ -322,8 +329,8 @@ app.get(`/cdn/:fileName`, async (req, res) => {
         .render("error", { errorMessage: "File not found" });
     }
 
-    const filesDB = db.table("filesDB");
-    let fileData = await filesDB.get(fileName);
+    const dataCollection = db.collection("file_uploadData");
+    const fileData = await dataCollection.findOne({ filename: fileName });
     
     let downloableFile;
 
@@ -429,17 +436,19 @@ async function encryptFile(fileData, filePath) {
   const iv = crypto.randomBytes(16);  // Generate a random 16-byte IV
 
   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-
   const encryptedData = Buffer.concat([cipher.update(fileData), cipher.final()]);
 
   fs.writeFileSync(filePath, encryptedData);
 
   // Store the key and IV in the database using the filePath as the key
   const db = await getDB();
-  const encryptionDB = db.table("encryptionDB");
-  
-  await encryptionDB.set(`${filePath}-key`, key.toString('hex'));
-  await encryptionDB.set(`${filePath}-iv`, iv.toString('hex'));
+  const dataCollection = db.collection("encryption_Data");
+
+  await dataCollection.insertOne({ 
+    filePath: filePath, 
+    key: key.toString("hex"),
+    iv: iv.toString("hex")
+  });
 
   return filePath;
 }
@@ -448,22 +457,21 @@ async function encryptFile(fileData, filePath) {
 async function decryptFile(filePath) {
   const encryptedData = fs.readFileSync(filePath);
   
-  // Retrieve the key and IV from the database using the filePath as the key
+  // Connect to the database
   const db = await getDB();
-  const encryptionDB = db.table("encryptionDB"); 
-  
-  const keyHex = await encryptionDB.get(`${filePath}-key`);
-  const ivHex = await encryptionDB.get(`${filePath}-iv`);
+  const dataCollection = db.collection("encryption_Data");
 
-  if (!keyHex || !ivHex) {
+  // Fetch encryption metadata
+  const fileData = await dataCollection.findOne({ filePath: filePath });
+
+  if (!fileData || !fileData.key || !fileData.iv) {
     throw new Error('Key or IV not found in database');
   }
 
-  const key = Buffer.from(keyHex, 'hex');
-  const iv = Buffer.from(ivHex, 'hex');
+  const key = Buffer.from(fileData.key, 'hex');
+  const iv = Buffer.from(fileData.iv, 'hex');
 
   const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-
   const decryptedData = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
 
   const decryptedFilePath = filePath.replace('/uploads/', '/decrypted/');

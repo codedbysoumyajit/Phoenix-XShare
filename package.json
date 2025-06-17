@@ -11,15 +11,15 @@
   "author": "Pheonix",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^5.3.0",
+    "bcryptjs": "^3.0.2",
+    "chalk": "^5.4.1",
     "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "express-fileupload": "^1.5.1",
     "express-session": "^1.18.1",
-    "luxon": "^3.5.0",
-    "qrcode": "^1.5.4",
-    "quick.db": "^9.1.7",
-    "write-file-atomic": "^6.0.0"
+    "luxon": "^3.6.1",
+    "mongodb": "^6.17.0",
+    "qrcode": "^1.5.4"
   }
 }
