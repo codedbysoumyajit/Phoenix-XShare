@@ -22,8 +22,8 @@ app.set("view engine", "ejs");
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-app.use(express.static(path.join(__dirname, "public")));
-app.set("views", path.join(__dirname, "public"));
+app.use(express.static(path.join(__dirname, "views")));
+app.set("views", path.join(__dirname, "views"));
 app.use(express.json());
 
 app.use(cookieParser()); // Use cookie-parser middleware
