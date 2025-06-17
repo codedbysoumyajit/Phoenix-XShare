@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import { DateTime } from "luxon";
 import bcrypt from 'bcryptjs';
 import { createServer } from "http";
+import cors from "cors";
 import log from "./utils/console.js";
 import getDB from "./utils/mongodb.js";
 import config from "../config/config.js";
@@ -43,6 +44,7 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 
 app.use(fileUpload());
+app.use(cors());
 
 app.set("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
 
@@ -308,6 +310,12 @@ app.get(`/download/:fileName`, async (req, res) => {
     //getting fileData from db
     const dataCollection = db.collection("file_uploadData");
     const fileData = await dataCollection.findOne({ filename: fileName });
+    
+    if (!fileData) {
+            console.warn(`File metadata not found for ${fileName} in DB.`);
+            return res.status(404).render("error", { errorMessage: "File not found or metadata missing." });
+        }
+    
     const uploadTime = fileData.uploadTime;
     const uploader = fileData.uploader;
     const fileSize = fileData.fileSize;
@@ -331,6 +339,11 @@ app.get(`/cdn/:fileName`, async (req, res) => {
 
     const dataCollection = db.collection("file_uploadData");
     const fileData = await dataCollection.findOne({ filename: fileName });
+
+        if (!fileData) {
+            console.warn(`File metadata not found for ${fileName} in DB.`);
+            return res.status(404).render("error", { errorMessage: "File not found or metadata missing." });
+        }
     
     let downloableFile;
 
@@ -339,14 +352,6 @@ app.get(`/cdn/:fileName`, async (req, res) => {
     } else {
       downloableFile = filePath;
     }
-
-    res.set({
-      "Accept-Ranges": "bytes",
-      "Content-Disposition": `attachment; filename="${fileName}"`,
-      "Transfer-Encoding": "chunked",
-      Expires: 0,
-      "Cache-Control": "no-cache",
-    });
 
     // Send the file for download
     res.download(downloableFile, async (err) => {
@@ -364,47 +369,30 @@ app.get(`/cdn/:fileName`, async (req, res) => {
 });
 
 app.get(`/view/:fileName`, async (req, res) => {
-  
-  const { fileName } = req.params;
+	const { fileName } = req.params;
+	const filePath = path.join(__dirname, "uploads", fileName);
+	const db = await getDB();
+  fs.access(filePath, fs.constants.F_OK, async (err) => {
+    if (err) {
+      return res
+        .status(404)
+        .render("error", { errorMessage: "File not found" });
+    }
+    
   const apiLink = `${config.settings.domain}/cdn/${fileName}`;
   const viewLink = `${config.settings.domain}/view/${fileName}`;
-  
- const imageFileExtensions = [
-    ".jpg",
-    ".jpeg",
-    ".png",
-    ".gif",
-    ".bmp",
-    ".tiff",
-    ".tif",
-    ".webp",
-    ".svg",
-    ".ico"
-];
-const videoFileExtensions = [
-    ".mp4",
-    ".avi",
-    ".mkv",
-    ".mov",
-    ".wmv",
-    ".flv",
-    ".webm",
-    ".mpg",
-    ".mpeg",
-    ".m4v",
-    ".3gp",
-    ".ogg"
-];
-  
-if (imageFileExtensions.some(extension => fileName.endsWith(extension))) {
-    res.render("view", { fileName, apiLink, viewLink })
-} else if(videoFileExtensions.some(extension => fileName.endsWith(extension))){
-  res.render("view-video", { fileName, apiLink, viewLink })
-} else {
-    res.status(500).render("error", { errorMessage: "Viewer doesn't suuport this file type." });
-}
- });
+           // 2. Fetch file metadata from DB
+        const dataCollection = db.collection("file_uploadData");
+        const fileData = await dataCollection.findOne({ filename: fileName });
 
+        if (!fileData) {
+            console.warn(`File metadata not found for ${fileName} in DB.`);
+            return res.status(404).render("error", { errorMessage: "File not found or metadata missing." });
+        }
+        
+   res.render("view", { fileName, apiLink, viewLink })
+  });
+});
 app.use((req, res, next) => {
   res.status(404).render("error", { errorMessage: "Page not found" });
 });
