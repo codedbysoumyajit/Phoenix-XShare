@@ -3,4 +3,5 @@ node_modules
 uploads
 decrypted
 replit.nix
+config.js
 quickdb.json
