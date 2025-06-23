@@ -26,10 +26,26 @@
     <h1>Phoenix XShare</h1>
     <div class="content-container">
         <h2 class="download-title"><i class="bi bi-file-earmark-arrow-down-fill"></i> Download File</h2>
-        <p class="file-info-text">File Name: <span class="file-info-value"><%= fileName %></span></p>
-        <p class="file-info-text">File Size: <span class="file-info-value"><%= fileSize %> MB</span></p>
-        <p class="file-info-text">Uploaded By: <span class="file-info-value"><%= uploader %></span></p>
-        <p class="file-info-text">Upload Time: <span class="file-info-value"><%= uploadTime %></span></p>
+        
+        <div class="file-info-group">
+            <p class="file-info-text">
+                <span class="file-info-label">File Name:</span>
+                <span class="file-info-value"><%= fileName %></span>
+            </p>
+            <p class="file-info-text">
+                <span class="file-info-label">File Size:</span>
+                <span class="file-info-value"><%= fileSize %> MB</span>
+            </p>
+            <p class="file-info-text">
+                <span class="file-info-label">Uploaded By:</span>
+                <span class="file-info-value"><%= uploader %></span>
+            </p>
+            <p class="file-info-text">
+                <span class="file-info-label">Upload Time:</span>
+                <span class="file-info-value"><%= uploadTime %></span>
+            </p>
+        </div>
+
         <a href="/cdn/<%= fileName %>" id="downloadLink" class="btn-primary-material" data-file-name="<%= fileName %>">
             <i class="bi bi-cloud-arrow-down-fill"></i> Download
         </a>

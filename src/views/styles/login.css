@@ -1,41 +1,40 @@
-/* Color Palette (Material You Dark Inspired) */
+/* Color Palette (Material You Dark Inspired) - Consistent */
 :root {
     --md-sys-color-primary: #BB86FC;
     --md-sys-color-on-primary: #000000;
     --md-sys-color-primary-container: #8C4DDB;
     --md-sys-color-on-primary-container: #FFFFFF;
-
     --md-sys-color-secondary: #03DAC6;
-    --md-sys-color-on-secondary: #000000;
-    --md-sys-color-secondary-container: #018786;
-    --md-sys-color-on-secondary-container: #FFFFFF;
-
-    --md-sys-color-tertiary: #EFB8C8;
-    --md-sys-color-on-tertiary: #492532;
-    --md-sys-color-tertiary-container: #633B48;
-    --md-sys-color-on-tertiary-container: #FFD8E4;
-
-    --md-sys-color-error: #CF6679;
-    --md-sys-color-on-error: #000000;
-    --md-sys-color-error-container: #B00020;
-    --md-sys-color-on-error-container: #FFFFFF;
-
     --md-sys-color-background: #121212;
     --md-sys-color-on-background: #E0E0E0;
     --md-sys-color-surface: #1E1E1E;
     --md-sys-color-on-surface: #E0E0E0;
-
     --md-sys-color-surface-variant: #2C2C2C;
     --md-sys-color-on-surface-variant: #BBBBBB;
-
-    --md-sys-color-outline: #424242;
-    --md-sys-color-inverse-on-surface: #313033;
-    --md-sys-color-inverse-surface: #E0E0E0;
-    --md-sys-color-inverse-primary: #6200EE;
+    --md-sys-color-outline: #4A4A4A;
+    --md-sys-color-error: #CF6679;
     --md-sys-color-shadow: #000000;
-    --md-sys-color-surface-tint: #BB86FC;
-    --md-sys-color-outline-variant: #3A3A3A;
-    --md-sys-color-scrim: #000000;
+}
+
+/* --- NEW: Aurora Background Effect --- */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: 
+        radial-gradient(circle at 15% 25%, rgba(187, 134, 252, 0.2), transparent 40%),
+        radial-gradient(circle at 85% 75%, rgba(3, 218, 198, 0.15), transparent 40%);
+    filter: blur(80px);
+    z-index: -1;
+    animation: pulse-aurora 15s infinite ease-in-out;
+}
+
+@keyframes pulse-aurora {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
 }
 
 body {
@@ -47,76 +46,86 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px; /* Default padding for medium/large screens */
     text-align: center;
     width: 100%;
-    max-width: 380px; /* Base max-width for non-mobile */
-    box-sizing: border-box;
+    max-width: 420px;
 }
 
 .logo {
-    max-width: 120px; /* Default logo size */
+    max-width: 120px;
     height: auto;
     margin-bottom: 20px;
 }
 
 h1 {
-    font-size: 1.8rem; /* Default heading size */
+    font-size: clamp(1.8rem, 5vw, 2.2rem);
     margin: 0 0 24px 0;
     font-family: "Ubuntu", sans-serif;
     font-weight: 700;
     color: var(--md-sys-color-on-background);
-    letter-spacing: 0.02em;
 }
 
+/* --- FANCY: Modern Glassmorphism Container --- */
 .form-container {
     width: 100%;
-    padding: 24px;
-    background-color: var(--md-sys-color-surface);
+    background-color: rgba(30, 30, 30, 0.65);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 28px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 32px rgba(var(--md-sys-color-shadow), 0.3);
+    padding: clamp(24px, 5vw, 36px);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    box-sizing: border-box;
+    gap: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.form-container:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 16px 40px rgba(var(--md-sys-color-shadow), 0.35), 
+                0 0 20px rgba(187, 134, 252, 0.1);
+}
+
+#loginForm {
+    display: contents;
+}
+
+/* --- POLISHED: Input Fields --- */
 .input-group {
     position: relative;
     width: 100%;
-    margin-bottom: 20px;
+    display: flex; /* Use flex for alignment */
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.2);
     border: 1px solid var(--md-sys-color-outline);
-    border-radius: 12px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-    background-color: var(--md-sys-color-surface-variant);
+    border-radius: 16px;
+    transition: all 0.3s ease;
 }
 
-.input-group:last-of-type {
-    margin-bottom: 30px;
-}
-
-.input-group:hover,
 .input-group:focus-within {
     border-color: var(--md-sys-color-primary);
-    box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.3);
+    box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.2);
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .form-control {
-    width: 100%;
-    padding: 14px 16px;
+    flex-grow: 1; /* Take up available space */
+    padding: 16px;
     border: none;
-    border-radius: 0;
     background-color: transparent;
     color: var(--md-sys-color-on-surface);
     font-family: 'Roboto Flex', sans-serif;
     font-size: 1rem;
-    box-sizing: border-box;
+    box-shadow: none;
 }
 
 .form-control::placeholder {
@@ -127,227 +136,86 @@ h1 {
 .form-control:focus {
     outline: none;
     box-shadow: none;
-    border-color: transparent;
-    background-color: transparent;
-}
-
-.password-field-group {
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-.password-field-group .form-control {
-    flex-grow: 1;
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
 }
 
 .btn-icon-toggle {
-    padding: 14px 12px;
+    padding: 16px;
     background-color: transparent;
     border: none;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-top-right-radius: 11px;
-    border-bottom-right-radius: 11px;
     color: var(--md-sys-color-on-surface-variant);
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    flex-shrink: 0;
+    transition: color 0.3s ease;
 }
 
 .btn-icon-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.08);
     color: var(--md-sys-color-on-surface);
-}
-
-.btn-icon-toggle:focus {
-    outline: none;
-    box-shadow: none;
-    background-color: rgba(255, 255, 255, 0.12);
 }
 
 .input-group:focus-within .btn-icon-toggle {
     color: var(--md-sys-color-primary);
-    background-color: transparent;
 }
 
+
+/* --- FANCY: Modernized Button --- */
 .btn-primary-material {
     width: 100%;
-    padding: 14px 20px;
+    padding: 16px 24px;
     background-color: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
     border: none;
     border-radius: 100px;
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.1rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 12px;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.15);
-    box-sizing: border-box;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(var(--md-sys-color-shadow), 0.2);
+    margin-top: 8px; /* Add some space above the button */
 }
 
 .btn-primary-material:hover {
     background-color: var(--md-sys-color-primary-container);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 7px 14px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 20px rgba(var(--md-sys-color-shadow), 0.3);
+    transform: translateY(-3px);
 }
 
 .btn-primary-material:active {
-    background-color: var(--md-sys-color-primary-container);
+    transform: translateY(0);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Error Message */
 .error-message {
     color: var(--md-sys-color-error);
     margin-top: 20px;
     font-size: 0.95rem;
     font-weight: 500;
+    background-color: rgba(207, 102, 121, 0.1);
+    border: 1px solid rgba(207, 102, 121, 0.5);
+    padding: 12px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+    display: none; /* Hidden by default */
 }
 
-/* --- Media Queries for Responsiveness --- */
-/* For very small screens (e.g., iPhone SE, older phones) */
-@media (max-width: 360px) {
-    .container {
-        padding: 10px;
-        max-width: 95%;
+/* --- Responsive Adjustments --- */
+@media (max-width: 480px) {
+    .container, .error-message {
+        max-width: 100%;
     }
 
-    .logo {
-        max-width: 100px; /* Increased from 80px */
-        margin-bottom: 16px; /* Slightly increased margin */
-    }
-
-    h1 {
-        font-size: 1.6rem; /* Increased from 1.4rem */
-        margin-bottom: 20px; /* Slightly increased margin */
-    }
-
-    .form-container {
-        padding: 12px;
-        gap: 16px;
-    }
-
-    .form-control {
-        padding: 10px 12px;
-        font-size: 0.9rem;
-    }
-
-    .btn-icon-toggle {
-        padding: 10px 8px;
-        font-size: 0.9rem;
-    }
-
-    .btn-primary-material {
-        padding: 10px 14px;
-        font-size: 0.9rem;
-        margin-top: 20px;
-    }
-
-    .error-message {
-        font-size: 0.85rem;
-        margin-top: 12px;
-    }
-}
-
-/* For small screens (typical phones, up to 576px) */
-@media (min-width: 361px) and (max-width: 576px) {
-    .container {
-        padding: 16px;
-        max-width: 90%;
-    }
-
-    .logo {
-        max-width: 110px; /* Slightly increased from 100px */
-        margin-bottom: 20px; /* Increased margin for more breathing room */
-    }
-
-    h1 {
-        font-size: 1.8rem; /* Increased from 1.6rem, matching default desktop for better prominence */
-        margin-bottom: 24px; /* Increased margin */
-    }
-
-    .form-container {
-        padding: 16px;
-        gap: 18px;
-    }
-
-    .form-control {
-        padding: 12px 14px;
+    .form-control, .btn-icon-toggle {
+        padding: 14px;
         font-size: 0.95rem;
     }
 
-    .btn-icon-toggle {
-        padding: 12px 10px;
-        font-size: 1rem;
-    }
-
     .btn-primary-material {
-        padding: 12px 16px;
-        font-size: 1rem;
-        margin-top: 22px;
-    }
-
-    .error-message {
-        font-size: 0.9rem;
-        margin-top: 16px;
-    }
-}
-
-/* For medium screens (e.g., tablets) */
-@media (min-width: 577px) and (max-width: 768px) {
-    .container {
-        max-width: 80%;
-        padding: 20px;
-    }
-
-    .form-container {
-        padding: 20px;
-    }
-}
-
-/* For larger screens (desktops) */
-@media (min-width: 769px) {
-    .container {
-        max-width: 500px;
-        padding: 24px;
-    }
-
-    .logo {
-        max-width: 150px;
-        margin-bottom: 24px;
-    }
-
-    h1 {
-        font-size: 2.25rem;
-        margin-bottom: 32px;
-    }
-
-    .form-container {
-        padding: 32px;
-        gap: 20px;
-    }
-
-    .form-control {
-        padding: 14px 16px;
-        font-size: 1rem;
-    }
-
-    .btn-icon-toggle {
-        padding: 14px 12px;
-    }
-
-    .btn-primary-material {
-        padding: 14px 20px;
+        padding: 14px;
         font-size: 1rem;
     }
 }

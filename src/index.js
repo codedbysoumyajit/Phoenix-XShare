@@ -2,6 +2,7 @@
 import express from "express";
 import fileUpload from "express-fileupload";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { createServer } from "http";
@@ -44,12 +45,26 @@ const SESSION_SECRET = await generateRandomSecret(); // Await top-level for modu
 
 app.use(
   session({
-    store: memoryStore,
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 15 * 24 * 60 * 60 * 1000, secure: false }, // Set 'secure: true' in production for HTTPS
-  }),
+    store: MongoStore.create({
+      mongoUrl: config.settings.mongoURI,
+      dbName: "phoenix-xshare",
+      collectionName: "sessions",
+      ttl: 14 * 24 * 60 * 60, // 14 days in seconds
+      crypto: {
+        secret: SESSION_SECRET, // use a strong, random string here
+        algorithm: "aes-256-gcm", // optional, default
+        hashing: "sha512",        // optional, default
+        encodeAs: "hex",          // optional, default
+      },
+    }),
+    cookie: {
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days in milliseconds
+      secure: false, // Set to true in production with HTTPS
+    },
+  })
 );
 
 // --- Route Mounting ---
