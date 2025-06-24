@@ -1,7 +1,5 @@
 ‎# Phoenix XShare v2.0
-‎
-‎![Logo](/src/views/icons/logo-trans.png)
-‎
+
 ‎Phoenix XShare is a secure, open-source, and self-hostable file-sharing application built for privacy, performance, and ease of use. It is a private upload server based on [Phoenix Share](https://github.com/Pheonix14/Phoenix-Share), with enhanced features, modern design, and improved security.
 ‎
 ‎[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)

@@ -5,3 +5,4 @@ decrypted
 replit.nix
 config.js
 quickdb.json
+./config/config.js
