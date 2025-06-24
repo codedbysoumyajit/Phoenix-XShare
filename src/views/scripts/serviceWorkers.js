@@ -19,35 +19,46 @@ if (workbox) {
     // Replace with the actual paths to your core HTML, CSS, JS, and essential icons.
     workbox.precaching.precacheAndRoute([
         // Core HTML pages
-        { url: '/', revision: '1' }, // Home/Login page
-        { url: '/view', revision: '1' }, // View page (might need specific route if dynamic)
-        { url: '/download', revision: '1' }, // Download page (might need specific route if dynamic)
-        { url: '/error', revision: '1' }, // Error page
+        { url: '/', revision: '3' },
+        { url: '/login', revision: '3' },
+        { url: '/upload', revision: '3' },
+        { url: '/view', revision: '3' },
+        { url: '/download', revision: '3' },
+        { url: '/error', revision: '3' },
+        { url: '/offline.html', revision: '2' },
 
         // Core CSS files
-        { url: '/styles/login.css', revision: '1' },
-        { url: '/styles/upload.css', revision: '1' },
-        { url: '/styles/uploaded.css', revision: '1' },
-        { url: '/styles/download.css', revision: '1' },
-        { url: '/styles/view.css', revision: '1' },
-        { url: '/styles/error.css', revision: '1' },
+        { url: '/styles/login.css', revision: '3' },
+        { url: '/styles/upload.css', revision: '3' },
+        { url: '/styles/uploaded.css', revision: '3' },
+        { url: '/styles/download.css', revision: '3' },
+        { url: '/styles/view.css', revision: '3' },
+        { url: '/styles/error.css', revision: '3' },
+        { url: '/styles/offline.css', revision: '2' },
 
         // Core JavaScript files
-        { url: '/scripts/registerSW.js', revision: '1' }, // Your service worker registration script
-        { url: '/scripts/login.js', revision: '1' },
-        { url: '/scripts/upload.js', revision: '1' },
-        { url: '/scripts/download.js', revision: '1' },
-        { url: '/scripts/view.js', revision: '1' },
+        { url: '/scripts/registerSW.js', revision: '3' },
+        { url: '/scripts/login.js', revision: '3' },
+        { url: '/scripts/upload.js', revision: '3' },
+        { url: '/scripts/download.js', revision: '3' },
+        { url: '/scripts/view.js', revision: '3' },
+        
+        // Manifest & Config files
+        { url: '/site.webmanifest', revision: '2' },
+        { url: '/browserconfig.xml', revision: '2' },
 
-        // Essential Icons and Manifest
-        { url: '/icons/apple-touch-icon.png', revision: '1' },
-        { url: '/icons/favicon-32x32.png', revision: '1' },
-        { url: '/icons/favicon-16x16.png', revision: '1' },
-        { url: '/icons/safari-pinned-tab.svg', revision: '1' },
-        { url: '/icons/logo-trans.png', revision: '1' }, // Your main logo
-        { url: '/site.webmanifest', revision: '1' },
-        { url: '/browserconfig.xml', revision: '1' },
-        { url: '/icons/phoenix-xshare-default-og.png', revision: '1' }, // Default OG image
+        // ICONS LIST ---
+        { url: '/icons/android-chrome-192x192.png', revision: '1' },
+        { url: '/icons/android-chrome-512x512.png', revision: '1' },
+        { url: '/icons/apple-touch-icon.png', revision: '2' },
+        { url: '/icons/favicon.ico', revision: '1' },
+        { url: '/icons/favicon-16x16.png', revision: '2' },
+        { url: '/icons/favicon-32x32.png', revision: '2' },
+        { url: '/icons/logo-trans.png', revision: '2' },
+        { url: '/icons/maskable_icon.png', revision: '1' },
+        { url: '/icons/maskable_icon_x512.png', revision: '1' },
+        { url: '/icons/mstile-150x150.png', revision: '1' },
+        { url: '/icons/safari-pinned-tab.svg', revision: '2' },
     ]);
 
     // 2. Runtime Caching Strategies

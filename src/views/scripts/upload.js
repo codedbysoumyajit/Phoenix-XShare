@@ -220,3 +220,66 @@ document.addEventListener('DOMContentLoaded', () => {
     // This assumes the initial page load might already contain elements needing handlers.
     attachLinkHandlers();
 });
+
+// Add this to your existing upload.js file
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ... your existing code for file uploads ...
+
+    // --- PWA Installation Prompt Logic ---
+    const pwaToast = document.getElementById('pwaInstallToast');
+    const installButton = document.getElementById('pwaInstallButton');
+    const closeButton = document.getElementById('pwaCloseButton');
+    let deferredPrompt;
+
+    // Listen for the browser's install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        deferredPrompt = e;
+        
+        // Show our custom install prompt toast
+        if (pwaToast) {
+            pwaToast.classList.add('visible');
+            pwaToast.classList.remove('hidden'); // Ensure it's not display:none
+        }
+    });
+
+    // Handle the install button click
+    if (installButton) {
+        installButton.addEventListener('click', async () => {
+            // Hide the toast
+            if (pwaToast) pwaToast.classList.remove('visible');
+
+            if (deferredPrompt) {
+                // Show the browser's install prompt
+                deferredPrompt.prompt();
+                
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                
+                // We've used the prompt, and it can't be used again. Clear it.
+                deferredPrompt = null;
+            }
+        });
+    }
+
+    // Handle the close button click
+    if (closeButton) {
+        closeButton.addEventListener('click', () => {
+            if (pwaToast) pwaToast.classList.remove('visible');
+        });
+    }
+
+    // Listen for the app being installed
+    window.addEventListener('appinstalled', () => {
+        // Hide the install prompt
+        if (pwaToast) pwaToast.classList.remove('visible');
+        // Clear the deferredPrompt so it doesn't show again
+        deferredPrompt = null;
+        console.log('Phoenix XShare was installed.');
+    });
+});
+
