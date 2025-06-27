@@ -7,7 +7,7 @@ Phoenix XShare is a secure, open-source, and self-hostable file-sharing applicat
 
 ## Key Features
 
-- **Encryption Toggle**: Users can enable or disable encryption for their files before uploading, ensuring extra security and privacy.
+- **Encryption Toggle**: Users can enable or disable encryption for their files. ensuring extra security and privacy.
 - **No External Dependencies**: Phoenix XShare uses a local file system for storage, eliminating the need for external databases or SFTP servers, making setup simple and hassle-free.
 - **User-Friendly Interface**: A sleek, intuitive design that makes file uploading and sharing effortless.
 - **Modern UI**: Completely revamped with a Material You-inspired design for a fresh and responsive experience across devices.
@@ -27,7 +27,7 @@ To set up and run Phoenix XShare on your local machine, follow these steps:
 
 1.  **Clone the Repository**:
     ```bash
-    git clone [https://github.com/codedbysoumyajit/Phoenix-XShare.git](https://github.com/codedbysoumyajit/Phoenix-XShare.git)
+    git clone https://github.com/codedbysoumyajit/Phoenix-XShare.git
     ```
 
 2.  **Change Directory**:
