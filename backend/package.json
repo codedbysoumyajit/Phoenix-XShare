@@ -11,7 +11,7 @@
   "author": "Pheonix",
   "license": "MIT",
   "dependencies": {
-    "adm-zip": "^0.5.17",
+    "adm-zip": "^0.6.0",
     "basic-ftp": "^6.0.1",
     "bcryptjs": "^3.0.2",
     "chalk": "^5.4.1",
